@@ -80,7 +80,7 @@ Abra outro terminal e conecte o cliente (mesmo procedimento para múltiplos clie
 - Saída numérica fixa com `printf("%.6f")` e locale `LC_NUMERIC="C"` para garantir **ponto** como separador decimal.  
 - Tratamento explícito de erros: entradas inválidas, divisão por zero.  
 - Encerramento de cliente via `QUIT`, e encerramento do servidor via `Ctrl+C`.  
-- Não chegamos a implementar um **arquivo de testes automatizados**, pois o processo se msotrou complexo para nós. Não sabíamos como fazer com que ele interagisse com o cliente para comparar as saídas, e não tínhamos conhecimento suficiente sobre scripts (TSV).
+- Não chegamos a implementar um **arquivo de testes automatizados**, pois o processo se mostrou complexo para nós. Não sabíamos como fazer com que ele interagisse com o cliente para comparar as saídas, e não tínhamos conhecimento suficiente sobre scripts (TSV).
 
 ---
 
