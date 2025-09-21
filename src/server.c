@@ -79,7 +79,7 @@ static int processa(const char *linha, double *out) {
 
 
     if (isupper(tmp[0])) return conta(cpy, out, FORMATO_PREFIXO); // Tenta formato prefixo
-    else if (isdigit(tmp[0])) return conta(cpy, out, FORMATO_INFIXO); // Tenta formato infixo
+    else if (isdigit(tmp[0]) || tmp[0] == '-' || tmp[0] == '+') return conta(cpy, out, FORMATO_INFIXO); // Tenta formato infixo (inclui números negativos)
     return CALC_ERROR;
 }
 
