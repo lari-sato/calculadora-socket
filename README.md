@@ -113,5 +113,4 @@ Abra outro terminal e conecte o cliente (mesmo procedimento para múltiplos clie
   HELP
   VERSION
   QUIT
-  45 / 9
   ```
