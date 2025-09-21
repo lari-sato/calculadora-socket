@@ -94,6 +94,7 @@ static void erro(int fd, const char *cod, const char *msg) {
     char b[128];
     int n = snprintf(b, sizeof(b), "%s %s %s\n", RESP_ERR, cod, msg);
     send(fd, b, n, 0);
+    exit(EXIT_FAILURE);
 }
 
 static void help(int fd) {
