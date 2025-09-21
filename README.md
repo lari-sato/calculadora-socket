@@ -74,13 +74,13 @@ Abra outro terminal e conecte o cliente (mesmo procedimento para múltiplos clie
 ---
 
 ## Decisões de projeto e limitações
-- O servidor usa **TCP IPv4** e multiplexação com `select()`, aceitando múltiplos clientes concorrentes.  
+- O servidor usa **TCP IPv4** e multiplexação com `select()`, aceitando múltiplos clientes concorrentes. 
+  - Implementar o suporte a **múltiplos clientes** mantendo buffers por conexão e garantindo que cada solicitação receba a resposta correta exigiu cuidado com montagem de linhas e estados.
 - A rotina que avalia expressões trata **prefixo e infixo** na mesma função, pois ao tentar separar em duas, a estrutura se mostrou praticamente idêntica e mudou apenas de onde vinha o operador.  
 - Saída numérica fixa com `printf("%.6f")` e locale `LC_NUMERIC="C"` para garantir **ponto** como separador decimal.  
 - Tratamento explícito de erros: entradas inválidas, divisão por zero.  
 - Encerramento de cliente via `QUIT`, e encerramento do servidor via `Ctrl+C`.  
-  - Implementar o suporte a **múltiplos clientes** mantendo buffers por conexão e garantindo que cada solicitação receba a resposta correta exigiu cuidado com montagem de linhas e estados por descritor.
-  - Não chegamos a implementar um **arquivo de testes automatizados**, pois o processo se msotrou complexo para nós. Não sabíamos como fazer com que ele interagisse com o cliente para comparar as saídas, e não tínhamos conhecimento suficiente sobre scripts (TSV).
+- Não chegamos a implementar um **arquivo de testes automatizados**, pois o processo se msotrou complexo para nós. Não sabíamos como fazer com que ele interagisse com o cliente para comparar as saídas, e não tínhamos conhecimento suficiente sobre scripts (TSV).
 
 ---
 
