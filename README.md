@@ -86,7 +86,7 @@ Abra outro terminal e conecte o cliente (mesmo procedimento para múltiplos clie
 - **Encerramento do Servidor** ao receber `SIGINT` (`Ctrl+C`).  
 - **Parametrização do Cliente** com endereço e porta -> (`./client 127.0.0.1 5050`).  
 - **Suporte a números negativos** usando `strtod()`, para conversão numérica.  
-- **Mensagens Padronizadas** do servidor em código, como demonstrado (`OK`/`ERR`).
+- **Mensagens Padronizadas** do servidor em código  (`OK`/`ERR`), como demonstrado.
 
 #### Bônus
 - **Concorrência**: Implementada via `select()`. Foi trabalhoso estruturar buffers independentes para cada conexão e garantir que todas as mensagens fossem montadas e respondidas corretamente.  
