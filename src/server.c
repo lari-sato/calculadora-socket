@@ -79,7 +79,7 @@ static int processa(const char *linha, double *out) {
 
 
     if (isupper(tmp[0])) return conta(cpy, out, FORMATO_PREFIXO); // Tenta formato prefixo
-    else if (isdigit(tmp[0]) || tmp[0] == '-' || tmp[0] == '+') return conta(cpy, out, FORMATO_INFIXO); // Tenta formato infixo (inclui números negativos)
+    else if (isdigit(tmp[0])) return conta(cpy, out, FORMATO_INFIXO); // Tenta formato infixo
     return CALC_ERROR;
 }
 
@@ -94,7 +94,6 @@ static void erro(int fd, const char *cod, const char *msg) {
     char b[128];
     int n = snprintf(b, sizeof(b), "%s %s %s\n", RESP_ERR, cod, msg);
     send(fd, b, n, 0);
-    exit(EXIT_FAILURE);
 }
 
 static void help(int fd) {
@@ -242,38 +241,58 @@ int main(int argc, char **argv) {
                         if (linha[0]) {
                             double r;
                             int rc = processa(linha, &r);
-                            if (rc == CALC_SUCCESS) ok(fd, r);
-                            else if (rc == CALC_DIVZERO) erro(fd, ERR_DIVZERO, "divisao_por_zero");
-                            else if (rc == CMD_HELP_CODE) help(fd);
-                            else if (rc == CMD_VERSION_CODE) {
+
+                            printf("[REQ fd=%d] \"%s\"\n", fd, linha);
+
+                            if (rc == CALC_SUCCESS) {
+                                ok(fd, r);
+                                printf("[OK fd=%d] Resultado = %.6f\n", fd, r);
+                            } else if (rc == CALC_DIVZERO) {
+                                erro(fd, ERR_DIVZERO, "divisao_por_zero");
+                                printf("[ERR fd=%d] Codigo=%s Msg=%s (linha=\"%s\")\n", fd, ERR_DIVZERO, "divisao_por_zero", linha);
+                                close(fd);
+                                FD_CLR(fd, &allset);
+                                clients[i] = -1;
+                                client_usados[i] = 0;
+                                break;
+                            } else if (rc == CMD_HELP_CODE) {
+                                help(fd);
+                            } else if (rc == CMD_VERSION_CODE) {
                                 char b[64];
                                 int m = snprintf(b, sizeof(b), "%s VERSION %s\n", RESP_OK, APP_VERSION);
                                 send(fd, b, m, 0);
-                            }
-                            else if (rc == CMD_QUIT_CODE) {
+                            } else if (rc == CMD_QUIT_CODE) {
                                 send(fd, "OK bye\n", 7, 0);
+                                printf("[INFO fd=%d] Cliente pediu QUIT\n", fd);
+                                close(fd);
+                                FD_CLR(fd, &allset);
+                                clients[i] = -1;
+                                client_usados[i] = 0;
+                                break;
+                            } else {
+                                erro(fd, ERR_INVALID, "entrada_invalida");
+                                printf("[ERR fd=%d] Codigo=%s Msg=%s (linha=\"%s\")\n", fd, ERR_INVALID, "entrada_invalida", linha);
                                 close(fd);
                                 FD_CLR(fd, &allset);
                                 clients[i] = -1;
                                 client_usados[i] = 0;
                                 break;
                             }
-                            else erro(fd, ERR_INVALID, "entrada_invalida");
                         }
 
-                        ini = nl + 1;
-                    }
 
                     // Mover dados restantes para o início do buffer
-                    size_t resto = client_bufs[i] + client_usados[i] - ini;
+                    ini = nl + 1; // avança para depois do '\n' processado
+                    size_t resto = client_usados[i] - (ini - client_bufs[i]);
                     memmove(client_bufs[i], ini, resto);
                     client_usados[i] = resto;
+                    break; // Sai do loop de processamento de mensagens para evitar processar lixo
+                    }
                 }
                 if (--nready <= 0) break; // nenhum FD restante pronto
             }
         }
-    }
-
+    }   
     close(listen_fd);
-    return 0;
+    return 0;  
 }
